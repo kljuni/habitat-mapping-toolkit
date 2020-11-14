@@ -1,10 +1,12 @@
 const path = require('path');
 
 module.exports = {
+  mode: 'development',
   watch: true,  
   entry: {
     app: './src/index.js'
     },  
+  devtool: 'inline-source-map',
   output: {
     publicPath: '/',
     path: path.resolve(__dirname, '../habitat_be/authentication/static'),
