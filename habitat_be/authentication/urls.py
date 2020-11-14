@@ -1,4 +1,5 @@
-from django.urls import path, url
+from django.urls import path
+from django.conf.urls import url
 from . import views
 from .views import ObtainTokenPairView, UserCreate, HelloWorldView
 from rest_framework_simplejwt import views as jwt_views
