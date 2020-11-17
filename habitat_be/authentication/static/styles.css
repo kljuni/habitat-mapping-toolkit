@@ -14,8 +14,8 @@ height: 0;
 
 .example-enter.example-enter-active {
 opacity: 1;
-height: 24px;
-transition: all 400ms ease-in;
+height: 48px;
+transition: all 400ms ease;
 }
 
 .example-leave {
