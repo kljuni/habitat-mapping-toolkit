@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+# import spatialite
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,6 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -31,8 +33,9 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'rest_framework',
+    'rest_framework',    
     'authentication',
+    'plots',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -76,8 +79,11 @@ WSGI_APPLICATION = 'habitat_be.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+# # SPATIALITE_LIBRARY_PATH= r'C:\Users\Ivan\Documents\CS50WEB\habitat-mapping-toolkit\Scripts\mod_spatialite'
+# SPATIALITE_LIBRARY_PATH = 'mod_spatialite'
 DATABASES = {
     'default': {
+        # 'ENGINE': 'django.contrib.gis.db.backends.spatialite',
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
@@ -147,3 +153,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# GDAL_LIBRARY_PATH = r'C:\Users\Ivan\Documents\CS50WEB\habitat-mapping-toolkit\Lib\site-packages\osgeo\gdal301'
+# GEOS_LIBRARY_PATH = r'C:\Users\Ivan\Documents\CS50WEB\habitat-mapping-toolkit\Lib\site-packages\shapely\DLLs\geos_c'

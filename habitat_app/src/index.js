@@ -10,11 +10,12 @@ import thunkMiddleware from 'redux-thunk';
 import theme from './theme';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { loginUser } from './Auth/reducers';
+import { createPlot } from './Create/reducers';
 import { localStorageMiddleware } from './middleware';
 
 const logger = createLogger();
 
-const rootReducer = combineReducers({loginUser})
+const rootReducer = combineReducers({loginUser, createPlot})
 
 const store = createStore(rootReducer, applyMiddleware(thunkMiddleware, logger, localStorageMiddleware));
 

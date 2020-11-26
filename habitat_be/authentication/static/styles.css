@@ -7,6 +7,11 @@ nav {
     padding: 1em;
 }
 
+.g-map-desk {
+    width: 50vw;
+    height: 75vh;
+}
+
 .example-enter {
 opacity: 0.01;
 height: 0;
