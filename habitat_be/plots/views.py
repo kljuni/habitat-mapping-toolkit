@@ -22,17 +22,43 @@ dirname = os.path.dirname(__file__)
 # Define regije.kml path
 filename = os.path.join(dirname, 'regije.kml')
 shapely.speedups.enable()
+import urllib.parse
+from itertools import chain
 
-class PlotSearch(APIView):
+class PlotSearchFilter(APIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
     
-    def get(self, request, format=None):
-        try:
-            data = Plot.objects.all()
-            serializer = PlotSearchSerializer(data, many=True)
-        except:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def get(self, request, hType, regija, searchString, format=None):
+        if hType == regija == searchString:
+            try:
+                data = Plot.objects.all()
+                serializer = PlotSearchSerializer(data, many=True)
+            except:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            hType = urllib.parse.unquote(hType)
+            regija = urllib.parse.unquote(regija)
+            searchString = urllib.parse.unquote(searchString)
+
+            data = Plot.objects.all().order_by('title')
+            if regija != 'null':
+                data = data.filter(region=regija)
+            if hType != 'null':
+                data = data.filter(habitat_type=hType)
+            if searchString != 'null':
+                region_r = data.objects.filter(region__unaccent__lower__trigram_similar=searchString, )
+            if searchString != 'null':
+                habitat_r = data.objects.filter(habitat_type__unaccent__lower__trigram_similar=searchString, )
+            if searchString != 'null':
+                title_r = data.objects.filter(title__unaccent__lower__trigram_similar=searchString, )
+                data = list(chain(region_r, habitat_r, title_r))
+
+            try:
+                serializer = PlotSearchSerializer(data, many=True)
+            except:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class PlotCreate(APIView):
