@@ -24,6 +24,12 @@ filename = os.path.join(dirname, 'regije.kml')
 shapely.speedups.enable()
 import urllib.parse
 from itertools import chain
+from django.db.models import CharField
+from django.db.models.functions import Lower
+import json
+import ast
+
+CharField.register_lookup(Lower)
 
 class PlotSearchFilter(APIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
@@ -47,11 +53,11 @@ class PlotSearchFilter(APIView):
             if hType != 'null':
                 data = data.filter(habitat_type=hType)
             if searchString != 'null':
-                region_r = data.objects.filter(region__unaccent__lower__trigram_similar=searchString, )
+                region_r = data.filter(region__lower__icontains=searchString, )
             if searchString != 'null':
-                habitat_r = data.objects.filter(habitat_type__unaccent__lower__trigram_similar=searchString, )
+                habitat_r = data.filter(habitat_type__lower__icontains=searchString, )
             if searchString != 'null':
-                title_r = data.objects.filter(title__unaccent__lower__trigram_similar=searchString, )
+                title_r = data.filter(title__lower__icontains=searchString, )
                 data = list(chain(region_r, habitat_r, title_r))
 
             try:
@@ -66,26 +72,40 @@ class PlotCreate(APIView):
 
     def post(self, request, format=None):
         data = JSONParser().parse(request)
-        geojson = data.get('info')
+        global json
+        # try:
+        #     geojson_extract = re.search(r'\{"type":"Polygon","coordinates":\[\[\[\d\d.+?\]\]\]\}', str(geojson)).group()
+        # except: 
+        #     # TODO
+        #     # Report error in geojson to user
+        #     print("error happening geojson_extract ------------------------------")
+        #     pass
         try:
-            geojson_extract = re.search(r'\{"type":"Polygon","coordinates":\[\[\[\d\d.+\]\]\]\}', str(geojson)).group()
-        except: 
-            # TODO
-            # Report error in geojson to user
-            print("error happening geojson_extract ------------------------------")
-            pass
+            print(type(data))
+            print(type(data.get('info')))
+            print("data.get('info')) ---------------")
+            geojson = ast.literal_eval(data.get('info'))
+            
+        except Exception as e:
+            print(e)
+            return Response({'error':'Please provide polygon data.'}, status=status.HTTP_400_BAD_REQUEST)
+        geojson_extract = geojson['features'][0]['geometry']
+        coord_data = geojson['features'][0]['geometry']['coordinates'][0]
+        polygon_center = [sum(x)/len(x) for x in zip(*coord_data)]
+        # except:
+        #     pass
         plot_area = area(geojson_extract)
         serializer_context = {
             'author': request.user,
         }
-        try:
-            p1 = re.search(r'\[\d\d.+?\]', str(geojson_extract)).group()[1:-1]
-        except:
-            # TODO
-            # report error
-            pass
-        res = tuple(map(float, p1.split(','))) 
-        p1 = Point(res)
+        # try:
+        #     p1 = re.search(r'\[\d\d.+?\]', str(geojson_extract)).group()[1:-1]
+        # except:
+        #     # TODO
+        #     # report error
+        #     pass
+        p1 = tuple(polygon_center) 
+        p1 = Point(polygon_center)
         polys = gpd.read_file(filename, driver='KML')    
         regije_list = ['Gorenjska', 'Goriška', 'Jugovzhodna Slovenija', 'Koroška', 'Notranjsko-kraška', 'Obalno-kraška', 'Osrednjeslovenska', 'Podravska', 'Pomurska', 'Savinjska', 'Spodnjeposavska', 'Zasavska']
         regija = 'Outside of Slovenia'
@@ -94,11 +114,9 @@ class PlotCreate(APIView):
             if pip_mask: 
                 regija = regije_list[i]     
         print('works 2 --------------------------------------------')
-        print(res[1])
-        print(type(res[1]))
         
-        data['lat'] = round(res[1], 6)
-        data['lng'] = round(res[0], 6)
+        data['lat'] = round(polygon_center[1], 6)
+        data['lng'] = round(polygon_center[0], 6)
         print(data['lat'])
         print('works 3 --------------------------------------------')
         data['region'] = regija

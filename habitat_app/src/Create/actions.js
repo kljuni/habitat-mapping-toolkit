@@ -15,6 +15,9 @@ export const setCreatePlot = (name, desc, type, url) => (dispatch) => {
         imageURL: url
     })
     .then(response => {
+        console.log(response.data)
+        console.log(response.status >= 200 && response.status <= 299)
+        localStorage.removeItem('geojson')
         dispatch({ type: CREATE_PLOT, payload: response.data })
     })
     .catch(error => {

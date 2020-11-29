@@ -4,8 +4,8 @@ import axiosInstance from "../AxiosApi";
 import PlotModal from "./PlotModal";
 
 const containerStyle = {
-    width: '100vw',
-    height: '700px'
+    width: '100%',
+    height: '500px'
   };
    
 const center = {
@@ -13,23 +13,13 @@ const center = {
     lng: 15.0523,
 };  
    
-const SearchMap = () => {
+const SearchMap = ({ markers, loading }) => {
     const [map, setMap] = useState(null)
-    const [markers, setMarkers] = useState([])
-    const [markersLoaded, setMarkersLoaded] = useState(false)
+    // const [markers, setMarkers] = useState([])
+    // const [markersLoaded, setMarkersLoaded] = useState(false)
     const [selected, setSelected] = useState(null)
     const [open, setOpen] = useState(false);
     const [plotData, setPlotData] = useState([]);
-
-    useEffect(() => {
-      axiosInstance.get('/plots/api/search/')
-      .then((res) => {
-        console.log(res);
-        setMarkers(res.data);
-        setMarkersLoaded(true);
-      })
-      .catch((err) => console.log(err))
-    }, [])
 
     const onLoad = useCallback(function callback(map) {
       // const bounds = new window.google.maps.LatLngBounds();
@@ -57,11 +47,11 @@ const SearchMap = () => {
       })
       .catch((err) => console.log(err))
     };
-   
+
     return (
       <div>
         <LoadScript
-          
+          googleMapsApiKey='AIzaSyC4CY4vYUeTZNYtFcFnnE8gDy0lsXkstsg'
         >
           <GoogleMap
             mapContainerStyle={containerStyle}
@@ -71,7 +61,7 @@ const SearchMap = () => {
             onUnmount={onUnmount}
           >
             {
-              markersLoaded ? (markers.map(marker => (
+              !loading ? (markers.map(marker => (
               <Marker
                 key={marker.id}
                 position={{ lat: parseFloat(marker.lat), lng: parseFloat(marker.lng) }}

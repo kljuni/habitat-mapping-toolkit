@@ -6,18 +6,18 @@ import {
 
 const initialState = {
     loading: false,
-    data: null,
+    data_title: null,
     error: null,
 }
 
 export const createPlot = (state=initialState, action={}) => {
     switch(action.type) {
         case ASYNC_START:
-            return {...state, loading: true}
+            return {...state, data_title: null, loading: true}
         case CREATE_PLOT:
             return {...state, 
                 loading: false,
-                data: action.payload
+                data_title: action.payload.title
             }
         case CREATE_PLOT_FAIL:
             return {...state, 
