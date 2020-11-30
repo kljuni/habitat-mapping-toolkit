@@ -31,6 +31,16 @@ export default function ReactGeoJSON({
   const [activeDrawing, setActiveDrawing] = useState([]);
   const identifier = useRef(Math.random().toString(36).substring(4));
 
+  // useEffect(() => {
+  //   if (refresh === 0) {
+  //     return undefined;
+  //   }
+  //   polygons.current = [];
+  //   // window.google.maps.setZoom(map.getZoom());
+  //   map.setZoom(map.getZoom());
+  //   console.log(window.google.maps)
+  // }, [refresh]);
+
   function mapInitiated() {
     const map = new google.maps.Map(mapRef.current, {
       ...mapOptions,
@@ -288,6 +298,7 @@ export default function ReactGeoJSON({
         if (polygons.current[i] === selectedPolygon.current) {
           polygons.current.splice(i, 1);
           setPolygonSelected(false);
+          localStorage.removeItem('geojson');
           return selectedPolygon.current.setMap(null);
         }
       }

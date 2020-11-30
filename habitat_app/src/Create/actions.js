@@ -7,6 +7,10 @@ import axiosInstance from "../AxiosApi";
 
 export const setCreatePlot = (name, desc, type, url) => (dispatch) => {
     dispatch({ type: ASYNC_START });
+    if (localStorage.getItem('geojson') === null) {
+        dispatch({ type: CREATE_PLOT_FAIL, payload: 'Please provide new polygon data'})
+        return;
+    }
     axiosInstance.post(`/plots/api/create/`, {
         title: name[0].toUpperCase() + name.slice(1),
         info: localStorage.getItem('geojson'),

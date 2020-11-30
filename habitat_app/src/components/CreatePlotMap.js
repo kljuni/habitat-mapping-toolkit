@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import ReactGeoJSON from './ReactGeoJSON';
 import Container from '@material-ui/core/Container';
 import CreatePlotForm from './CreatePlotForm';
@@ -8,16 +8,20 @@ import { useHistory } from 'react-router';
 const CreatePlotMap = () => {
     
     // When components unmounts set google api to null, so other maps can load afterwards
-    // useEffect(() => {
-    //     return () => { window.google = null }
-    // }, [])
+    useEffect(() => {
+        return () => { window.google = null }
+    }, [])
+    
+    const [refresh, doRefresh] = useState(0);
     console.log(process.env)
     // const mapRef = useRef();
     // const onMapLoad = useCallback((map) => {
     //     mapRef.current = map;
     // }, [])
     const onPlotSave = useCallback(() => {
+        doRefresh(refresh => refresh + 1);
     }, [])
+    console.log(refresh)
 
     return (
         <div className="row">

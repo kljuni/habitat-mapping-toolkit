@@ -8,12 +8,13 @@ const initialState = {
     loading: false,
     data_title: null,
     error: null,
+    refresh: 0,
 }
 
 export const createPlot = (state=initialState, action={}) => {
     switch(action.type) {
         case ASYNC_START:
-            return {...state, data_title: null, loading: true}
+            return {...state, refresh: state.refresh +1, data_title: false, error: false, loading: true}
         case CREATE_PLOT:
             return {...state, 
                 loading: false,

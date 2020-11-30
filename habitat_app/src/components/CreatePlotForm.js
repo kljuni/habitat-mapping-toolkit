@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -10,12 +10,14 @@ import Select from '@material-ui/core/Select';
 import { habitat_types } from './Util';
 import { connect } from 'react-redux';
 import { setCreatePlot } from '../Create/actions';
+import TransitionAlert from './TransitionAlert';
 
 const mapStateToProps = state => {
     return {
         data_title: state.createPlot.data_title,
-        error: state.createPlot.error ? "Wrong user credentials" : null,
+        error: state.createPlot.error,
         loading: state.createPlot.loading,
+        refresh: state.createPlot.refresh,
     }
 };
 
@@ -34,23 +36,61 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const CreatePlotForm = ({ handleSave, data_title, error, onPlotSave }) => {
+const CreatePlotForm = ({ handleSave, data_title, error, onPlotSave, refresh }) => {
     const [name, setName] = useState('');
     const [desc, setDesc] = useState('');
     const [type, setType] = useState(null);
     const [url, setUrl] = useState(null);
+    const [open, setOpen] = useState(false);
+    const [severity, setSeverity] = useState('');
+    // const firstUpdate = useRef(true);
+
+    useEffect(() => {
+        if (data_title) {
+            setName('');
+            setDesc('');
+            setType(null);
+            setUrl('');
+            setOpen(true);
+            setSeverity('success');
+            setTimeout(function(){ setOpen(false); }, 7000);
+        }
+        if (error) {
+            setOpen(true);
+            setSeverity('error');
+            setTimeout(function(){ setOpen(false); }, 7000);
+        }
+    }, [data_title, error, refresh])
+
     const handleSubmit = (e, name, desc, type, url) => {
         e.preventDefault();
         onPlotSave();
         handleSave(name, desc, type, url);
     };
 
-    useEffect(() => {
-        setName('');
-        setDesc('');
-        setType(null);
-        setUrl('');
-    }, [data_title])
+    // 
+    // useEffect(() => {
+    //     if (data_title === null) {
+    //         return;
+    //     }
+    //     setName('');
+    //     setDesc('');
+    //     setType(null);
+    //     setUrl('');
+    //     setOpen(true);
+    //     setSeverity('success');
+    //     setTimeout(function(){ setOpen(false); }, 5000);
+    // }, [data_title, error])
+
+    // useEffect(() => {
+    //     if (error === null) {
+    //         return;
+    //     }
+    //     setOpen(true);
+    //     setSeverity('error');
+    //     setTimeout(function(){ setOpen(false); }, 5000);
+    // }, [])
+
     const select = habitat_types.map(el => {
         return(
             <MenuItem key={el} value={el+""}>{el}</MenuItem>
@@ -100,6 +140,14 @@ const CreatePlotForm = ({ handleSave, data_title, error, onPlotSave }) => {
                         required
                     />
                     <Button type="submit" >Save plot</Button>
+
+                    <TransitionAlert 
+                        open={open} 
+                        setOpen={setOpen} 
+                        data_title={data_title}
+                        error={error}
+                        severity={severity}
+                    />
             </form>
     )
 };
