@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useRef } from 'react'
 import { GoogleMap, InfoWindow, LoadScript, Marker } from '@react-google-maps/api';
 import axiosInstance from "../AxiosApi";
 import PlotModal from "./PlotModal";
@@ -13,18 +13,27 @@ const center = {
     lng: 15.0523,
 };  
    
-const SearchMap = ({ markers, loading }) => {
+const SearchMap = ({ markers, loading, mapRef }) => {
     const [map, setMap] = useState(null)
     // const [markers, setMarkers] = useState([])
     // const [markersLoaded, setMarkersLoaded] = useState(false)
     const [selected, setSelected] = useState(null)
     const [open, setOpen] = useState(false);
     const [plotData, setPlotData] = useState([]);
+   
+    // const mapRef = useRef();
 
     const onLoad = useCallback(function callback(map) {
       // const bounds = new window.google.maps.LatLngBounds();
       // map.fitBounds(bounds);
       setMap(map)
+      mapRef.current = map;
+    }, [])
+
+    const panTo = useCallback(({ lat, lng }) => {
+      console.log('panin')
+      mapRef.current.panTo({lat, lng});
+      mapRef.current.setZoom(14);
     }, [])
    
     const onUnmount = useCallback(function callback(map) {
@@ -41,7 +50,6 @@ const SearchMap = ({ markers, loading }) => {
     const viewModal = (id) => {
       axiosInstance.get(`/plots/api/view/${id}`)
       .then((res) => {
-        console.log(res);
         setPlotData(res.data);
         handleOpen();
       })

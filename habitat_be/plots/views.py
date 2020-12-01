@@ -28,13 +28,30 @@ from django.db.models import CharField
 from django.db.models.functions import Lower
 import json
 import ast
+# Only for development purpose!
+import time
 
 CharField.register_lookup(Lower)
+
+def unique_chain(*iterables):
+    known_ids = set()
+    for it in iterables:
+        for element in it:
+            if element.id not in known_ids:
+                known_ids.add(element.id)
+                yield element
 
 class PlotSearchFilter(APIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
     
-    def get(self, request, hType, regija, searchString, format=None):
+    def get(self, request, format=None):
+        hType = request.GET.get('hType')
+        regija = request.GET.get('regija')
+        searchString = request.GET.get('searchString')
+
+        # Testing!
+        time.sleep(5)
+
         if hType == regija == searchString:
             try:
                 data = Plot.objects.all()
@@ -48,17 +65,17 @@ class PlotSearchFilter(APIView):
             searchString = urllib.parse.unquote(searchString)
 
             data = Plot.objects.all().order_by('title')
-            if regija != 'null':
+            if regija != 'undefined':
                 data = data.filter(region=regija)
-            if hType != 'null':
+            if hType != 'undefined':
                 data = data.filter(habitat_type=hType)
-            if searchString != 'null':
+            if searchString != 'undefined':
                 region_r = data.filter(region__lower__icontains=searchString, )
-            if searchString != 'null':
+            if searchString != 'undefined':
                 habitat_r = data.filter(habitat_type__lower__icontains=searchString, )
-            if searchString != 'null':
+            if searchString != 'undefined':
                 title_r = data.filter(title__lower__icontains=searchString, )
-                data = list(chain(region_r, habitat_r, title_r))
+                data = list(unique_chain(region_r, habitat_r, title_r))
 
             try:
                 serializer = PlotSearchSerializer(data, many=True)

@@ -1,11 +1,13 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useRef } from 'react'
 import axiosInstance from "../AxiosApi";
 import SearchMap from "./SearchMap";
 import Filter from "./Filter";
-import PlotList from "./PlotList";
+import PlotTable from "./PlotTable";
 import { habitat_types, regije_list } from './Util';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Alert from '@material-ui/lab/Alert';
 import { connect } from 'react-redux';
 import { setPlotSearch } from '../Search/actions';
 
@@ -24,20 +26,31 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 const SearchView = ({ handlePlotSearch, markers, loading, error }) => {
-    const [hType, setHType] = useState(null);
-    const [regija, setRegija] = useState(null);
-    const [searchString, setSearchString] = useState(null);
+    const [hType, setHType] = useState(undefined);
+    const [regija, setRegija] = useState(undefined);
+    const [searchString, setSearchString] = useState(undefined);
 
-    console.log(regija)
-    console.log(hType)
+    const mapRef = useRef();
+
+    const panTo = useCallback(({ lat, lng, zoom }) => {
+        console.log('panin')
+        mapRef.current.panTo({lat, lng});
+        mapRef.current.setZoom(zoom);
+    }, [])
 
     useEffect(() => {
-        handlePlotSearch(null, null, null)
+        handlePlotSearch(undefined, undefined, undefined)
     }, [])
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        panTo({lat: 45.99745,lng: 15.0523, zoom: 8})
         handlePlotSearch(hType, regija, searchString);
+    }
+
+    const handleSearchString = (val) => {
+        if (val === '') {val = undefined}
+        setSearchString(val);
     }
 
     return (
@@ -45,15 +58,24 @@ const SearchView = ({ handlePlotSearch, markers, loading, error }) => {
             <SearchMap 
             markers={markers}
             loading={loading}
-            
+            mapRef={mapRef}
             ></SearchMap>
             <form onSubmit={(e) => handleSubmit(e)} noValidate autoComplete="off">
                 <Filter setFilter={setHType} data={habitat_types} title="Filter by habitat type" ></Filter>
                 <Filter setFilter={setRegija} data={regije_list} title="Filter by region" ></Filter>
-                <TextField onChange={(e) => setSearchString(e.target.value)} id="standard-basic" label="Standard" />
-                <div><Button className="my-2" type="submit" variant="contained" color="primary">Filter Plots</Button></div>
+                <TextField onChange={(e) => handleSearchString(e.target.value)} id="standard-basic" label="Standard" />
+                <div>
+                    <Button className="my-2" type="submit" variant="contained" color="primary">Filter Plots</Button>
+                </div>
             </form>
-            <PlotList></PlotList>
+            {
+                loading ? <CircularProgress /> : (markers.length === 0 ? null : 
+                <PlotTable 
+                    markers={markers} 
+                    mapRef={mapRef}
+                    panTo={panTo}
+                />)
+            }
       </div>
     )
 };

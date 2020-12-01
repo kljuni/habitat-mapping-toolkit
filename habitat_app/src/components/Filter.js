@@ -5,9 +5,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 
-
 const Filter = ({ setFilter, data, title }) => {
-  const [state, setState] = useState(null);
 
   const handleChange = (event) => {
     setFilter(event.target.value)
@@ -18,20 +16,15 @@ const Filter = ({ setFilter, data, title }) => {
             <FormControl>
             <InputLabel htmlFor="age-native-simple">{title}</InputLabel>
             <Select
-                native
-                value={state}
+                native             
                 onChange={handleChange}
-                inputProps={{
-                name: 'age',
-                id: 'age-native-simple',
-                }}
             >
-                <option aria-label="None" value="" />
+                <option aria-label="None" value={'undefined'} />
                 {
                     data ? (data.map(type => (
                         <option key={type} value={type}>{type}</option>
                     ))) 
-                    : null
+                    : undefined
                 }
 
             </Select>
