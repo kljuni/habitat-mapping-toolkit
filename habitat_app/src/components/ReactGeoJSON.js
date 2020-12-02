@@ -16,6 +16,7 @@ export default function ReactGeoJSON({
   scriptLibraries = null,
 }) {
   const [map, setMap] = useState(false);
+  const [refresh, setRefresh] = useState(0);
   const mapRef = useRef(null);
   const polygons = useRef([]);
   const zoomLevel = useRef(zoom);
@@ -31,15 +32,9 @@ export default function ReactGeoJSON({
   const [activeDrawing, setActiveDrawing] = useState([]);
   const identifier = useRef(Math.random().toString(36).substring(4));
 
-  // useEffect(() => {
-  //   if (refresh === 0) {
-  //     return undefined;
-  //   }
-  //   polygons.current = [];
-  //   // window.google.maps.setZoom(map.getZoom());
-  //   map.setZoom(map.getZoom());
-  //   console.log(window.google.maps)
-  // }, [refresh]);
+  useEffect(() => {
+    clearDataOnLoad();
+  }, [refresh]);
 
   function mapInitiated() {
     const map = new google.maps.Map(mapRef.current, {
@@ -260,7 +255,7 @@ export default function ReactGeoJSON({
     deselect();
 
     if (localStorage.getItem('geojson') !== null) {
-        return null
+      polygons.current[polygons.current.length - 1].setMap(null);
     }
 
     activeDrawingSet.current = [];
@@ -292,13 +287,29 @@ export default function ReactGeoJSON({
     }
   }
 
+  function clearDataOnLoad() {
+    for (let i = 0; i < polygons.current.length; i++) {
+      if (polygons.current[i]) polygons.current[i].setMap(null);
+    }
+    localStorage.removeItem('geojson');
+  }
+  
+  function clearAllPolygonsData() {
+    for (let i = 0; i < polygons.current.length; i++) {
+      if (polygons.current[i]) polygons.current[i].setMap(null);
+    }
+    localStorage.removeItem('geojson');
+    setRefresh(prev => prev + 1);
+  }
+  
+
   function removeSelectedPolygon() {
     if (selectedPolygon.current !== null) {
       for (let i = 0; i < polygons.current.length; i++) {
         if (polygons.current[i] === selectedPolygon.current) {
           polygons.current.splice(i, 1);
-          setPolygonSelected(false);
-          localStorage.removeItem('geojson');
+          setPolygonSelected(false);   
+          localStorage.removeItem('geojson');   
           return selectedPolygon.current.setMap(null);
         }
       }
@@ -309,14 +320,21 @@ export default function ReactGeoJSON({
 
   function saveCurrentDrawing() {
     deselect();
-
+    console.log(polygons)
+    console.log("polygons up")
     const areas = [];
-    polygons.current.forEach((polygon) => {
-      const p = polygon.getPath();
-      if (typeof p === 'undefined') return;
 
-      areas.push(p.getArray().map((area) => [area.lng(), area.lat()]));
-    });
+    // polygons.current.forEach((polygon) => {
+    //   const p = polygon.getPath();
+    //   if (typeof p === 'undefined') return;
+    //   if (typeof p === 'undefined') return;
+
+    //   areas.push(p.getArray().map((area) => [area.lng(), area.lat()]));
+    // });
+
+    const p = polygons.current[polygons.current.length - 1].getPath();
+
+    areas.push(p.getArray().map((area) => [area.lng(), area.lat()]));
 
     const feature = (coordinates) => ({
       type: 'Feature',
@@ -363,13 +381,18 @@ export default function ReactGeoJSON({
               '0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -1px rgba(0,0,0,.06)',
           }}
         >
+          {localStorage.getItem('geojson') && (
+          <Action className="btn-light" onClick={clearAllPolygonsData} >Delete all</Action>
+          )}
           {activeDrawing && activeDrawing.length > 0 && (
             <Action className="btn-light" onClick={removeLastPoint}>undo</Action>
           )}
           {polygonSelected && (
             <Action className="btn-light" onClick={removeSelectedPolygon}>remove</Action>
           )}
-          <Action className="btn-light" onClick={startEditing} disabled={localStorage.getItem('geojson')}>+</Action>
+          <Action className="btn-light" onClick={startEditing} 
+          // disabled={localStorage.getItem('geojson')}
+          >+</Action>
           <Action className="btn-light" onClick={saveCurrentDrawing}>save</Action>
         </span>
       )}

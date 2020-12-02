@@ -58,7 +58,6 @@ export const MobileNav = ({ classes, handleMenu, handleClose, anchorEl, open, lo
                 <div>
                     <MenuItem onClick={() => handleMenuClick('/search')}>Search habitats</MenuItem>
                     <MenuItem onClick={() => handleMenuClick('/create')}>Create new data</MenuItem>
-                    <MenuItem onClick={() => handleMenuClick('/account')}>My account</MenuItem>
                     <MenuItem onClick={() => {handleMenuClick('/logout');handleLogout()}}>Log out</MenuItem>
                 </div>
                 :

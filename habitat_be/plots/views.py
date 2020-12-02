@@ -49,9 +49,6 @@ class PlotSearchFilter(APIView):
         regija = request.GET.get('regija')
         searchString = request.GET.get('searchString')
 
-        # Testing!
-        time.sleep(5)
-
         if hType == regija == searchString:
             try:
                 data = Plot.objects.all()

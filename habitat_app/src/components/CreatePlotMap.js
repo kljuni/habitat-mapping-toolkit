@@ -18,6 +18,7 @@ const CreatePlotMap = () => {
     // const onMapLoad = useCallback((map) => {
     //     mapRef.current = map;
     // }, [])
+
     const onPlotSave = useCallback(() => {
         doRefresh(refresh => refresh + 1);
     }, [])

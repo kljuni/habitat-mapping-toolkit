@@ -32,7 +32,6 @@ export const DeskNav = ({ classes, handleMenu, handleClose, anchorEl, open, logg
                 <span>
                     <Button onClick={() => history.push('/search/')} color="inherit">Search habitats</Button>
                     <Button onClick={() => history.push('/create/')} color="inherit">Create new data</Button>
-                    <Button onClick={() => history.push('/account/')} color="inherit">My account</Button>
                     <Button onClick={() => handleLogout()} color="inherit">Log out</Button>
                 </span>
                 :

@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const baseURL = 'http://127.0.0.1:8000/'
+export const baseURL = 'http://127.0.0.1:8000/'
 
 const axiosInstance = axios.create({
     baseURL: baseURL,
@@ -16,10 +16,6 @@ axiosInstance.interceptors.response.use(
     response => response,
     error => {
         const originalRequest = error.config;
-
-        if (error.response === undefined) {
-            return undefined;
-        }
 
         // Prevent infinite loops
         if (originalRequest.url === baseURL + 'api/token/refresh/' && error.response.status === 401) {
