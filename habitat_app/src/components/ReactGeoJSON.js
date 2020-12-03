@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import Button from '@material-ui/core/Button';
 
 export default function ReactGeoJSON({
   apiKey,
@@ -354,17 +355,20 @@ export default function ReactGeoJSON({
   }
 
   const Action = ({ children, ...rest }) => (
-    <button
-      style={{
-        border: 1,
-        padding: 15,
-        fontWeight: 'bold',
-        cursor: 'pointer',
-      }}
-      {...rest}
-    >
-      {children}
-    </button>
+      <Button
+        variant="contained"
+        style={{
+          // border: '1px solid black',
+          // fontSize: '1rem',
+          // padding: 15,
+          fontWeight: 'bold',
+          cursor: 'pointer',
+          marginLeft: 5,
+        }}
+        {...rest}
+      >
+        {children}
+      </Button>
   );
 
   return (
@@ -382,18 +386,18 @@ export default function ReactGeoJSON({
           }}
         >
           {localStorage.getItem('geojson') && (
-          <Action className="btn-light" onClick={clearAllPolygonsData} >Delete all</Action>
+          <Action className="btn-light" onClick={clearAllPolygonsData} >DELETE ALL</Action>
           )}
           {activeDrawing && activeDrawing.length > 0 && (
-            <Action className="btn-light" onClick={removeLastPoint}>undo</Action>
+            <Action className="btn-light" onClick={removeLastPoint}>UNDU</Action>
           )}
           {polygonSelected && (
-            <Action className="btn-light" onClick={removeSelectedPolygon}>remove</Action>
+            <Action className="btn-light" onClick={removeSelectedPolygon}>REMOVE</Action>
           )}
           <Action className="btn-light" onClick={startEditing} 
           // disabled={localStorage.getItem('geojson')}
           >+</Action>
-          <Action className="btn-light" onClick={saveCurrentDrawing}>save</Action>
+          <Action className="btn-light" onClick={saveCurrentDrawing}>SAVE</Action>
         </span>
       )}
       {map && children({ map })}

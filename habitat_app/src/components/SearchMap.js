@@ -2,10 +2,20 @@ import React, { useEffect, useState, useCallback, useRef } from 'react'
 import { GoogleMap, InfoWindow, LoadScript, Marker } from '@react-google-maps/api';
 import axiosInstance from "../AxiosApi";
 import PlotModal from "./PlotModal";
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import {
+  BrowserView,
+  MobileView,
+  isBrowser,
+  isMobileOnly,
+  isTablet
+} from "react-device-detect";
 
 const containerStyle = {
     width: '100%',
-    height: '500px'
+    height: isMobileOnly ? '85vh' : window.innerWidth < 960 ? '40vh' :
+    (window.innerHeight - 64),
   };
    
 const center = {
@@ -57,7 +67,7 @@ const SearchMap = ({ markers, loading, mapRef }) => {
     };
 
     return (
-      <div>
+      <span>
         <LoadScript
           googleMapsApiKey='AIzaSyC4CY4vYUeTZNYtFcFnnE8gDy0lsXkstsg'
         >
@@ -87,9 +97,15 @@ const SearchMap = ({ markers, loading, mapRef }) => {
                 onCloseClick={() => setSelected(null)}
               >
                 <div>
-                  <h2>{selected.title}</h2>
-                  <p><b>Size: {selected.size_ha} ha</b></p>
-                  <u onClick={() => viewModal(selected.id)}>Get more data</u>
+                  <Typography variant="h4" gutterBottom>
+                    {selected.title}
+                  </Typography>
+                  <Typography variant="body1" gutterBottom>
+                    {selected.size_ha} ha
+                  </Typography>
+                  <Typography className="pointer" onClick={() => viewModal(selected.id)} variant="button" display="block" gutterBottom>
+                    <u>Get more data</u>
+                  </Typography>
                 </div>
               </InfoWindow>)
               : null
@@ -105,7 +121,7 @@ const SearchMap = ({ markers, loading, mapRef }) => {
             ></PlotModal>) 
             : null
         }
-      </div>
+      </span>
     )
   }
    

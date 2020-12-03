@@ -6,6 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Button from '@material-ui/core/Button';
+import Box from '@material-ui/core/Box';
 import Select from '@material-ui/core/Select';
 import { habitat_types } from './Util';
 import { connect } from 'react-redux';
@@ -139,7 +140,14 @@ const CreatePlotForm = ({ handleSave, data_title, error, onPlotSave, refresh }) 
                         onChange={(e) => setUrl(e.target.value)}
                         required
                     />
-                    <Button type="submit" >Save plot</Button>
+                    <Box my={4}>
+                        <Button 
+                            type="submit" 
+                            variant="contained" 
+                            color="secondary">
+                                Save plot
+                        </Button>
+                    </Box>
 
                     <TransitionAlert 
                         open={open} 

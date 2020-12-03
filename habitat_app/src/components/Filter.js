@@ -13,7 +13,7 @@ const Filter = ({ setFilter, data, title }) => {
 
     return (
         <div>
-            <FormControl>
+            <FormControl fullWidth>
             <InputLabel htmlFor="age-native-simple">{title}</InputLabel>
             <Select
                 native             

@@ -20,6 +20,10 @@ nav {
     padding: 1em;
 }
 
+.pointer {
+    cursor: pointer;
+}
+
 .g-map-desk {
     width: 50vw;
     height: 75vh;

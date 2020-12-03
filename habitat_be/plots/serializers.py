@@ -15,6 +15,7 @@ class PlotSearchSerializer(serializers.ModelSerializer):
                 'lng',
                 'size_ha',
                 'habitat_type',
+                'imageURL',
             )
     def get_size_ha(self, instance):
         hectares = round(instance.size / 10000, 1)
