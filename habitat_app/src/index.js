@@ -11,12 +11,12 @@ import theme from './theme';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { loginUser } from './Auth/reducers';
 import { createPlot } from './Create/reducers';
-import { searchFilterPlots } from './Search/reducers';
+import { searchFilterPlots, downloadPlots } from './Search/reducers';
 import { localStorageMiddleware } from './middleware';
 
 const logger = createLogger();
 
-const rootReducer = combineReducers({ loginUser, createPlot, searchFilterPlots })
+const rootReducer = combineReducers({ loginUser, createPlot, searchFilterPlots, downloadPlots })
 
 const store = createStore(rootReducer, applyMiddleware(thunkMiddleware, logger, localStorageMiddleware));
 

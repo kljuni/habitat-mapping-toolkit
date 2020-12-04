@@ -6,7 +6,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
-from .serializers import PlotSerializer, PlotSearchSerializer, PlotViewSerializer
+from .serializers import PlotSerializer, PlotSearchSerializer, PlotViewSerializer, PlotDownloadSerializer
 from .models import Plot
 from django.core.exceptions import ValidationError
 from area import area
@@ -24,7 +24,7 @@ filename = os.path.join(dirname, 'regije.kml')
 shapely.speedups.enable()
 import urllib.parse
 from itertools import chain
-from django.db.models import CharField
+from django.db.models import CharField, TextField
 from django.db.models.functions import Lower
 import json
 import ast
@@ -32,6 +32,7 @@ import ast
 import time
 
 CharField.register_lookup(Lower)
+TextField.register_lookup(Lower)
 
 def unique_chain(*iterables):
     known_ids = set()
@@ -41,6 +42,19 @@ def unique_chain(*iterables):
                 known_ids.add(element.id)
                 yield element
 
+class PlotDownload(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, id, format=None):
+        try:
+            data = Plot.objects.get(pk=id)
+            serializer_data = PlotDownloadSerializer(data)
+        except Exception as e:
+            print(e)    
+            return Response(serializer_data.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer_data.data, status=status.HTTP_201_CREATED) 
+
+
 class PlotSearchFilter(APIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
     
@@ -48,7 +62,7 @@ class PlotSearchFilter(APIView):
         hType = request.GET.get('hType')
         regija = request.GET.get('regija')
         searchString = request.GET.get('searchString')
-        # time.sleep(3)
+        
         if hType == regija == searchString:
             try:
                 data = Plot.objects.all()
@@ -69,10 +83,12 @@ class PlotSearchFilter(APIView):
             if searchString != 'undefined':
                 region_r = data.filter(region__lower__icontains=searchString, )
             if searchString != 'undefined':
+                description_r = data.filter(description__lower__icontains=searchString, )
+            if searchString != 'undefined':
                 habitat_r = data.filter(habitat_type__lower__icontains=searchString, )
             if searchString != 'undefined':
                 title_r = data.filter(title__lower__icontains=searchString, )
-                data = list(unique_chain(region_r, habitat_r, title_r))
+                data = list(unique_chain(region_r, habitat_r, title_r, description_r))
 
             try:
                 serializer = PlotSearchSerializer(data, many=True)
@@ -83,6 +99,22 @@ class PlotSearchFilter(APIView):
 
 class PlotCreate(APIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    def get(self, request, format=None):
+        id = request.GET.get('id')
+        print(id)
+        print('pass 1')
+        try:
+            data = Plot.objects.get(pk=id)
+        except Exception as e:
+            print(e)    
+        serializer_data = PlotSerializer(data=data)
+        if serializer_data.is_valid(): 
+            print('pass 2')
+            json = serializer_data.data
+            return Response(json, status=status.HTTP_201_CREATED) 
+        print('pass 3')
+        return Response(serializer_data.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, format=None):
         data = JSONParser().parse(request)
@@ -155,7 +187,5 @@ class PlotView(APIView):
             serializer = PlotViewSerializer(data)
         except Exception as e:
             print(e)
-            print('e -----------------------------------------------------------')
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(data=data, status=status.HTTP_200_OK)

@@ -26,7 +26,7 @@ class PlotViewSerializer(serializers.ModelSerializer):
     createdAt = serializers.SerializerMethodField(method_name='get_created_at')
     class Meta:
         model = Plot
-        fields = ('title', 'size_ha', 'region', 'habitat_type', 'description', 'createdAt', 'imageURL')
+        fields = ('id', 'title', 'size_ha', 'region', 'habitat_type', 'description', 'createdAt', 'imageURL')
 
     def get_size_ha(self, instance):
         hectares = round(instance.size / 10000, 1)
@@ -58,15 +58,13 @@ class PlotSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         author = self.context.get('author', None)
-        # print("CREATE 2----------------------------------")
-        # size = self.context.get('size', None)
-        # size = self.context['size']
-        # region = self.context['region']
-        # region = self.context.get('region', None)
-        # print("CREATE 3----------------------------------")
-        # print("CREATE 4----------------------------------")
         plot = Plot.objects.create(author=author, **validated_data)
         return plot
 
     def get_created_at(self, instance):
         return instance.created_at.isoformat()
+
+class PlotDownloadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Plot
+        fields = ('id', 'title', 'info')

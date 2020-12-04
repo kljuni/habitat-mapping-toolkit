@@ -58,7 +58,7 @@ const SearchMap = ({ markers, loading, mapRef }) => {
     const handleClose = () => setOpen(false);
 
     const viewModal = (id) => {
-      axiosInstance.get(`/plots/api/view/${id}`)
+      axiosInstance.get(`/api/plots/view/${id}`)
       .then((res) => {
         setPlotData(res.data);
         handleOpen();

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -18,8 +18,25 @@ import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+import Box from '@material-ui/core/Box';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
+import TransitionAlert from './TransitionAlert';
+import { download } from './Util';
+import { connect } from 'react-redux';
+import { setDownloadPlot } from '../Search/actions';
+
+const mapStateToProps = state => {
+  return {
+      error: state.downloadPlots.error,
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    downloadShp: (id, title) => dispatch(setDownloadPlot(id, title)),
+  }
+}
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -50,6 +67,7 @@ function stableSort(array, comparator) {
 const headCells = [
   { id: 'title', numeric: false, disablePadding: false, label: 'Plot title' },
   { id: 'size_ha', numeric: true, disablePadding: false, label: 'Size (ha)' },
+  { id: 'download', numeric: true, disablePadding: false, label: 'Download (ESRI shp)' },
 ];
 
 function EnhancedTableHead(props) {
@@ -180,25 +198,41 @@ const useStyles = makeStyles((theme) => ({
     top: 20,
     width: 1,
   },
+  pointer: {
+    cursor: 'pointer',
+  },
+  alert: {
+    marginBottom: 20,
+  },
 }));
 
-const PlotTable = ({ markers, mapRef, panTo }) => {
+const PlotTable = ({ markers, mapRef, panTo, downloadShp, error }) => {
   const classes = useStyles();
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('calories');
+  const [order, setOrder] = useState('asc');
+  const [orderBy, setOrderBy] = useState('calories');
   // const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [page, setPage] = useState(0);
+  const [dense, setDense] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [severity, setSeverity] = useState('');
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const createData = (title, size_ha, lat, lng) => {
-    return { title, size_ha, lat, lng };
+  useEffect(() => {
+    if (error) {
+      setOpen(true);
+      setSeverity('error');
+      setTimeout(function(){ setOpen(false); }, 5000);
+  }
+  }, [error])
+
+  const createData = (title, size_ha, lat, lng, id) => {
+    return { title, size_ha, lat, lng, id };
   }
 
   const rows = [];
   
   for (let plot of markers) {
-    rows.push(createData(plot.title, plot.size_ha, plot.lat, plot.lng))
+    rows.push(createData(plot.title, plot.size_ha, plot.lat, plot.lng, plot.id))
   }
 
   // new Array(markers.length).fill(createData(56, 88, 75, 67, 4.3));
@@ -267,6 +301,19 @@ const PlotTable = ({ markers, mapRef, panTo }) => {
 
   return (
     <div className={classes.root}>
+      {
+        error ? 
+        <Box className={classes.alert}>
+          <TransitionAlert                    
+              open={open} 
+              setOpen={setOpen} 
+              data_title='none'
+              error={error}
+              severity={severity}
+          />
+        </Box> 
+        : null
+      }
       <Paper className={classes.paper}>
         <TableContainer>
           <Table
@@ -294,17 +341,23 @@ const PlotTable = ({ markers, mapRef, panTo }) => {
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.name, row.lat, row.lng)}
+                      
                       role="checkbox"
                       // aria-checked={isItemSelected}
                       tabIndex={-1}
                       key={row.id}
                       // selected={isItemSelected}
                     >
-                      <TableCell component="th" id={labelId} scope="row" padding="left">
+                      <TableCell 
+                        className={classes.pointer}
+                        onClick={(event) => handleClick(event, row.name, row.lat, row.lng)}
+                        component="th" id={labelId} scope="row" padding="left">
                         {row.title}
                       </TableCell>
                       <TableCell align="right">{row.size_ha}</TableCell>
+                      <TableCell 
+                        className={classes.pointer}
+                        numeric component="a" onClick={() => downloadShp(row.id, row.title)} align="right">{download}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -330,4 +383,4 @@ const PlotTable = ({ markers, mapRef, panTo }) => {
   );
 }
 
-export default PlotTable;
+export default connect(mapStateToProps, mapDispatchToProps)(PlotTable);

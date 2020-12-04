@@ -1,7 +1,10 @@
 import {
     ASYNC_START,
     SEARCH_FILTER_PLOT,
-    SEARCH_FILTER_FAIL
+    SEARCH_FILTER_FAIL,
+    DWLD_START,
+    DOWNLOAD_PLOT,
+    DOWNLOAD_PLOT_FAIL
 } from '../constants';
 
 const initialState = {
@@ -23,6 +26,31 @@ export const searchFilterPlots = (state=initialState, action={}) => {
             return {...state, 
                 loading: false,
                 error: action.payload
+            }
+        default:
+            return state;
+    }
+}
+
+const initialStateDL = {
+    loading: false,
+    data: null,
+    error: null,
+}
+
+export const downloadPlots = (state=initialStateDL, action={}) => {
+    switch(action.type) {
+        case DWLD_START:
+            return {...state, loading: true, error: null}
+        case DOWNLOAD_PLOT:
+            return {...state, 
+                loading: false,
+                data: action.payload
+            }
+        case DOWNLOAD_PLOT_FAIL:
+            return {...state, 
+                loading: false,
+                error: 'Data available only to registered users'
             }
         default:
             return state;
