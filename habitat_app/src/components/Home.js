@@ -7,16 +7,10 @@ import Typography from '@material-ui/core/Typography';
 import { isMobile } from "react-device-detect";
 import { makeStyles } from '@material-ui/core/styles';
  
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
     paper: {
-        // position: 'absolute',
-        // right: isMobile ? 0 : '10vw',
-        // top: isMobile ? '35vh' : '25vh',
-        // width: isMobile ? '60vw' : '25rem',
-        // padding: theme.spacing(2),
         textAlign: 'left',
         marginTop: isMobile ? '22vh' : '30vh',
-        // marginRight: 50,
     }, 
 }));
 
@@ -55,19 +49,8 @@ const Home = () => {
                             <Typography className={classes.myButtonClass} variant="overline" display="block">
                             {check} Search the database
                             </Typography>                            
-                            {/* <p>{check} Create new plots</p>                   
-                            <p>{check} Contribute data</p>                   
-                            <p>{check} Search the database</p>       */}
                             </Grid>
-                        </Grid>
-                            
-                            {/* <div className={classes.paper}>
-                                <h2>Welcome to HabMapp</h2>
-                                <p>
-                                    HabMapp is an online database for storing and sharing data on protected areas.
-                                    Making citizen science straightforward.
-                                </p>
-                            </div>                                                      */}
+                        </Grid>            
                     </Grow>
                 </div>
             </div>

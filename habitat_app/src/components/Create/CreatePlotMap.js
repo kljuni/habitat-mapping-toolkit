@@ -1,19 +1,14 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ReactGeoJSON from './ReactGeoJSON';
-import Container from '@material-ui/core/Container';
 import CreatePlotForm from './CreatePlotForm';
 import Grid from '@material-ui/core/Grid';
-import { Button } from '@material-ui/core';
-import { useHistory } from 'react-router';
 import { makeStyles } from "@material-ui/core/styles";
-import { isMobileOnly, isMobile } from 'react-device-detect';
+import { isMobileOnly } from 'react-device-detect';
 
 const useStyles = makeStyles({
     item1: {
-        height: isMobileOnly ? '80vh' : window.innerWidth < 1280 ? '60vh' :
+        height: isMobileOnly ? window.innerHeight - 400 : window.innerWidth < 1280 ? '60vh' :
         (window.innerHeight - 64),
-        // padding: '1rem',
-        // paddingBottom: isMobile ? 0 : '1rem',
     },
     item2: {
         padding: '0 1rem',
@@ -33,15 +28,10 @@ const CreatePlotMap = () => {
     
     const [refresh, doRefresh] = useState(0);
     const classes = useStyles();
-    // const mapRef = useRef();
-    // const onMapLoad = useCallback((map) => {
-    //     mapRef.current = map;
-    // }, [])
 
     const onPlotSave = useCallback(() => {
         doRefresh(refresh => refresh + 1);
     }, [])
-    console.log(refresh)
 
     return (
         <Grid container>
@@ -57,7 +47,7 @@ const CreatePlotMap = () => {
                     tilt: 0, 
                     mapTypeControl:true,
                     mapTypeControlOptions:{
-                        mapTypeIds:['roadmap', 'hybrid'],
+                        mapTypeIds:['roadmap', 'hybrid'],                        
                     }
                 }}
                 zoom={8}

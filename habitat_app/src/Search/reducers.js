@@ -1,5 +1,5 @@
 import {
-    ASYNC_START,
+    ASYNC_START_SEARCH,
     SEARCH_FILTER_PLOT,
     SEARCH_FILTER_FAIL,
     DWLD_START,
@@ -15,7 +15,7 @@ const initialState = {
 
 export const searchFilterPlots = (state=initialState, action={}) => {
     switch(action.type) {
-        case ASYNC_START:
+        case ASYNC_START_SEARCH:
             return {...state, loading: true}
         case SEARCH_FILTER_PLOT:
             return {...state, 

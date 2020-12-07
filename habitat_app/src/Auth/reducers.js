@@ -1,8 +1,9 @@
 import {
-    ASYNC_START,
+    ASYNC_START_USER,
     LOGIN,
     LOGIN_FAILED,
     LOGOUT,
+    LOGOUT_FAILED,
     REGISTER,
     REGISTRATION_FAIL,
 } from '../constants';
@@ -18,8 +19,12 @@ const initialState = {
 
 export const loginUser = (state=initialState, action={}) => {
     switch(action.type) {
-        case ASYNC_START:
-            return {...state, loading: true}
+        case ASYNC_START_USER:
+            return {...state, 
+                loading: true, 
+                error: null, 
+                errorEmail: false, 
+                errorPassword: false}
         case LOGIN:
         case REGISTER:
             return {...state, 
@@ -43,11 +48,14 @@ export const loginUser = (state=initialState, action={}) => {
         }
         case LOGOUT:
             return {...state,
+                loading: false,
                 currentUser: null,
                 logged_in: false,
                 error: null
-                // refreshToken: action.payload.refresh,
-                // accessToken: action.payload.access
+            }
+        case LOGOUT_FAILED:
+            return {...state,
+                error: action.payload
             }
         default:
             return state;

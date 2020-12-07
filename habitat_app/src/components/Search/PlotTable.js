@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -10,21 +9,12 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
 import Box from '@material-ui/core/Box';
-import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
-import TransitionAlert from './TransitionAlert';
-import { download } from './Util';
+import TransitionAlert from '../TransitionAlert';
+import { download } from '../Util';
 import { connect } from 'react-redux';
-import { setDownloadPlot } from '../Search/actions';
+import { setDownloadPlot } from '../../Search/actions';
 
 const mapStateToProps = state => {
   return {
@@ -135,47 +125,6 @@ const useToolbarStyles = makeStyles((theme) => ({
   },
 }));
 
-// const EnhancedTableToolbar = (props) => {
-//   const classes = useToolbarStyles();
-//   const { numSelected } = props;
-
-//   return (
-//     <Toolbar
-//       className={clsx(classes.root, {
-//         [classes.highlight]: numSelected > 0,
-//       })}
-//     >
-//       {numSelected > 0 ? (
-//         <Typography className={classes.title} color="inherit" variant="subtitle1" component="div">
-//           {numSelected} selected
-//         </Typography>
-//       ) : (
-//         <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-//           Nutrition
-//         </Typography>
-//       )}
-
-//       {numSelected > 0 ? (
-//         <Tooltip title="Delete">
-//           <IconButton aria-label="delete">
-//             <DeleteIcon />
-//           </IconButton>
-//         </Tooltip>
-//       ) : (
-//         <Tooltip title="Filter list">
-//           <IconButton aria-label="filter list">
-//             <FilterListIcon />
-//           </IconButton>
-//         </Tooltip>
-//       )}
-//     </Toolbar>
-//   );
-// };
-
-// EnhancedTableToolbar.propTypes = {
-//   numSelected: PropTypes.number.isRequired,
-// };
-
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
@@ -210,7 +159,6 @@ const PlotTable = ({ markers, mapRef, panTo, downloadShp, error }) => {
   const classes = useStyles();
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('calories');
-  // const [selected, setSelected] = React.useState([]);
   const [page, setPage] = useState(0);
   const [dense, setDense] = useState(false);
   const [open, setOpen] = useState(false);
@@ -235,51 +183,14 @@ const PlotTable = ({ markers, mapRef, panTo, downloadShp, error }) => {
     rows.push(createData(plot.title, plot.size_ha, plot.lat, plot.lng, plot.id))
   }
 
-  // new Array(markers.length).fill(createData(56, 88, 75, 67, 4.3));
-
-  // const rows = () => {
-  //   markers.map(el => (
-  //     createData(el.title, el.habitat_type, el.size_ha, 67, 4.3)
-  //   ))
-  // }
-  console.log(rows)
-
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
 
-  // const handleSelectAllClick = (event) => {
-  //   if (event.target.checked) {
-  //     const newSelecteds = rows.map((n) => n.name);
-  //     setSelected(newSelecteds);
-  //     return;
-  //   }
-  //   setSelected([]);
-  // };
-
   const handleClick = (event, name, lat, lng) => {
-    // const selectedIndex = selected.indexOf(name);
-
     panTo({lat: parseFloat(lat), lng: parseFloat(lng), zoom: 14});
-    
-    // let newSelected = [];
-
-    // if (selectedIndex === -1) {
-    //   newSelected = newSelected.concat(selected, name);
-    // } else if (selectedIndex === 0) {
-    //   newSelected = newSelected.concat(selected.slice(1));
-    // } else if (selectedIndex === selected.length - 1) {
-    //   newSelected = newSelected.concat(selected.slice(0, -1));
-    // } else if (selectedIndex > 0) {
-    //   newSelected = newSelected.concat(
-    //     selected.slice(0, selectedIndex),
-    //     selected.slice(selectedIndex + 1),
-    //   );
-    // }
-
-    // setSelected(newSelected);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -290,12 +201,6 @@ const PlotTable = ({ markers, mapRef, panTo, downloadShp, error }) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-
-  const handleChangeDense = (event) => {
-    setDense(event.target.checked);
-  };
-
-  // const isSelected = (name) => selected.indexOf(name) !== -1;
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 

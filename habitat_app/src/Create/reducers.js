@@ -1,5 +1,5 @@
 import {
-    ASYNC_START,
+    ASYNC_START_CREATE,
     CREATE_PLOT,
     CREATE_PLOT_FAIL
 } from '../constants';
@@ -13,7 +13,7 @@ const initialState = {
 
 export const createPlot = (state=initialState, action={}) => {
     switch(action.type) {
-        case ASYNC_START:
+        case ASYNC_START_CREATE:
             return {...state, refresh: state.refresh +1, data_title: false, error: false, loading: true}
         case CREATE_PLOT:
             return {...state, 

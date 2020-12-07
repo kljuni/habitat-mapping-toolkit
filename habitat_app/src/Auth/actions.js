@@ -1,19 +1,16 @@
 import {
-    ASYNC_START,
+    ASYNC_START_USER,
     LOGIN,
     LOGIN_FAILED,
     LOGOUT,
+    LOGOUT_FAILED,
     REGISTER,
     REGISTRATION_FAIL,
 } from '../constants';
 import axiosInstance from "../AxiosApi";
 
-// export const getLoggedOut = () => {
-//     dispatch({ type:LOGOUT })
-// }
-
 export const setLoginUser = (email, password) => (dispatch) => {
-    dispatch({ type: ASYNC_START });
+    dispatch({ type: ASYNC_START_USER });
     axiosInstance.post('/api/token/obtain/', {
         email: email,
         password: password
@@ -27,7 +24,7 @@ export const setLoginUser = (email, password) => (dispatch) => {
 }
 
 export const startRegistration = (email, password) => (dispatch) => {
-    dispatch({ type: ASYNC_START });
+    dispatch({ type: ASYNC_START_USER });
     axiosInstance.post('/api/user/create/', {
         email: email,
         password: password
@@ -38,8 +35,6 @@ export const startRegistration = (email, password) => (dispatch) => {
             password: password
         })
         .then(res => {
-            console.log(res)
-            console.log("res")
             dispatch({ type: REGISTER, payload: res.data })
         })
         .catch(error => {
@@ -47,8 +42,6 @@ export const startRegistration = (email, password) => (dispatch) => {
         })
     })
     .catch(error => {
-        console.log(error)
-        // console.log(error.response.data)
         dispatch({ 
             type: REGISTRATION_FAIL, 
             errorEmail: Object.keys(error.response.data)[0] === 'email' ? true : false, 
@@ -58,7 +51,7 @@ export const startRegistration = (email, password) => (dispatch) => {
 }
 
 export const startLogoutUser = () => (dispatch) => {
-    dispatch({ type: ASYNC_START });
+    dispatch({ type: ASYNC_START_USER });
     axiosInstance.post('/api/blacklist/', {
         "refresh_token": localStorage.getItem("refresh_token")
     })
@@ -66,6 +59,6 @@ export const startLogoutUser = () => (dispatch) => {
         dispatch({ type: LOGOUT, payload: response.data })
     })
     .catch(error => {
-        console.log(error);
+        dispatch({ type: LOGOUT_FAILED, payload: "Logout failed" })
     })
 }

@@ -1,12 +1,11 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
-import Grid from '@material-ui/core/Grid';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
-import { download } from './Util';
+import { download } from '../Util';
 import { connect } from 'react-redux';
-import { setDownloadPlot } from '../Search/actions';
+import { setDownloadPlot } from '../../Search/actions';
 import { isMobile } from 'react-device-detect';
 
 const mapDispatchToProps = (dispatch) => {
@@ -16,25 +15,6 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 const useStyles = makeStyles((theme) => ({
-  // modal_mobile:{
-  //   position:'absolute',
-  //   top: 16,
-  //   left: 16,
-  //   border: '1px solid gray',
-  //   overflow:'scroll',
-  //   maxHeight: window.innerHeight - 32,
-  //   width: isMobile ? window.innerWidth - 32 : 500,
-  //   display:'block',
-  //   backgroundColor: 'white',
-  // },
-  // header: {
-  //   padding: '12px 0',
-  //   borderBottom: '1px solid darkgrey'
-  // },
-  // content: {
-  //   padding: 12,
-  //   backgroundColor: 'white',
-  // },
   modal_desk: {
     display: 'flex',
     alignItems: 'center',
@@ -74,7 +54,6 @@ const PlotModal = ({ open=true, plotData, error, handleClose, downloadShp }) => 
   const classes = useStyles();
 
   const created = new Date(plotData.createdAt)
-  console.log(plotData)
   return (
     <div>
       <Modal
@@ -110,7 +89,11 @@ const PlotModal = ({ open=true, plotData, error, handleClose, downloadShp }) => 
                 <p id="transition-modal-description"><b>Region: </b>{plotData.region}</p>
                 <p id="transition-modal-description"><b>Description: </b>{plotData.description}</p>
                 <p id="transition-modal-description"><b>Created: </b>{created.toDateString()}</p>
-                <img className={classes.img} src={plotData.imageURL} alt='plot photo' />
+                <img 
+                  className={classes.img} 
+                  src={plotData.imageURL ? plotData.imageURL : 'https://habmapp.oa.r.appspot.com/static/default.jpg'} 
+                  alt='plot photo' 
+                />  
               </div>
             </div>
         </Fade>

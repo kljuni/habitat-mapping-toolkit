@@ -13,4 +13,5 @@ handlers:
   script: auto
 
 # added:
+instance_class: F4_HIGHMEM
 # entrypoint: gunicorn -b :$PORT habitat_be.wsgi

@@ -53,8 +53,6 @@ export default function ReactGeoJSON({
       } 
     });
 
-    console.log(map);
-    console.log("map");
     map.addListener('click', onMapClick);
 
     setMap(map);
@@ -321,8 +319,6 @@ export default function ReactGeoJSON({
 
   function saveCurrentDrawing() {
     deselect();
-    console.log(polygons)
-    console.log("polygons up")
     const areas = [];
 
     // polygons.current.forEach((polygon) => {
@@ -378,6 +374,7 @@ export default function ReactGeoJSON({
         <span
           style={{
             position: 'absolute',
+            display: 'flex',
             bottom: 20,
             right: 5,
             zIndex: 900,
@@ -385,9 +382,9 @@ export default function ReactGeoJSON({
               '0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -1px rgba(0,0,0,.06)',
           }}
         >
-          {localStorage.getItem('geojson') && (
-          <Action className="btn-light" onClick={clearAllPolygonsData} >DELETE ALL</Action>
-          )}
+          {/* {localStorage.getItem('geojson') && (
+          <Action className="btn-light" onClick={clearAllPolygonsData} >DEL ALL</Action>
+          )} */}
           {activeDrawing && activeDrawing.length > 0 && (
             <Action className="btn-light" onClick={removeLastPoint}>UNDU</Action>
           )}

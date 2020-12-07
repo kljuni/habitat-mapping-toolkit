@@ -1,5 +1,5 @@
 import {
-    ASYNC_START,
+    ASYNC_START_SEARCH,
     SEARCH_FILTER_PLOT,
     SEARCH_FILTER_FAIL,
     DWLD_START,
@@ -10,7 +10,7 @@ import axios from 'axios'
 import axiosInstance from "../AxiosApi";
 
 export const setPlotSearch = (hType, regija, searchString) => (dispatch) => {
-    dispatch({ type: ASYNC_START });
+    dispatch({ type: ASYNC_START_SEARCH });
     axiosInstance.get(`/api/plots/search/filter/`, {params: {
         hType: hType ? hType : 'undefined',
         regija: regija ? regija : 'undefined',
@@ -26,13 +26,10 @@ export const setPlotSearch = (hType, regija, searchString) => (dispatch) => {
 
 export const setDownloadPlot = (id, title) => (dispatch) => {
     dispatch({ type: DWLD_START });
-    console.log(id)
     axiosInstance.get(`/api/plots/${id}/`)
     .then(response => {
         const json = response.data.info        
         const json_forUpload = json.replace(/'/g, '"');
-        console.log(json_forUpload)
-        console.log('----------------------------------------------------')
         const outputName = `${response.data.title}.zip`
         let config = {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -42,24 +39,6 @@ export const setDownloadPlot = (id, title) => (dispatch) => {
         bodyFormData.append('json', json_forUpload);
         bodyFormData.append('outputName', outputName);
         axios.post(`https://ogre.adc4gis.com/convertJson`, bodyFormData, config)
-        // axios.post(`http://ogre.adc4gis.com/convertJson`, {
-        //     json: json_forUpload,
-        //     outputName: outputName
-        // }, config)
-        //     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        //     url: `http://ogre.adc4gis.com/convertJson`, 
-        //     data: {
-        //         json: json_forUpload,
-        //         outputName: outputName
-        // }})
-        // axios({
-        //     method: 'post',
-        //     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        //     url: `http://ogre.adc4gis.com/convertJson`, 
-        //     data: {
-        //         json: json_forUpload,
-        //         outputName: outputName
-        // }})
         .then(res => {
             let blob = new Blob([res.data], { type: 'application/zip' })
             const downloadUrl = URL.createObjectURL(blob)
@@ -71,7 +50,6 @@ export const setDownloadPlot = (id, title) => (dispatch) => {
             dispatch({ type: DOWNLOAD_PLOT, payload: res.data })
         })
         .catch(err => {
-            console.log(err)
         })
     })
     .catch(error => {

@@ -1,12 +1,12 @@
 import {
-    ASYNC_START,
+    ASYNC_START_CREATE,
     CREATE_PLOT,
     CREATE_PLOT_FAIL
 } from '../constants';
 import axiosInstance from "../AxiosApi";
 
 export const setCreatePlot = (name, desc, type, url) => (dispatch) => {
-    dispatch({ type: ASYNC_START });
+    dispatch({ type: ASYNC_START_CREATE });
     if (localStorage.getItem('geojson') === null) {
         dispatch({ type: CREATE_PLOT_FAIL, payload: 'Please provide new polygon data'})
         return;
@@ -19,8 +19,6 @@ export const setCreatePlot = (name, desc, type, url) => (dispatch) => {
         imageURL: url
     })
     .then(response => {
-        console.log(response.data)
-        console.log(response.status >= 200 && response.status <= 299)
         localStorage.removeItem('geojson')
         dispatch({ type: CREATE_PLOT, payload: response.data })
     })

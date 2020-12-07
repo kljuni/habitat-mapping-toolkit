@@ -15,7 +15,7 @@ class Plot(models.Model):
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    imageURL = models.URLField()
+    imageURL = models.URLField(blank=True, null=True)
 
     def __str__(self):
         return self.title
