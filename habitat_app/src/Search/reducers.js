@@ -50,7 +50,7 @@ export const downloadPlots = (state=initialStateDL, action={}) => {
         case DOWNLOAD_PLOT_FAIL:
             return {...state, 
                 loading: false,
-                error: 'Data available only to registered users'
+                error: action.payload
             }
         default:
             return state;

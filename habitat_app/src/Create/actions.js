@@ -25,6 +25,6 @@ export const setCreatePlot = (name, desc, type, url) => (dispatch) => {
         dispatch({ type: CREATE_PLOT, payload: response.data })
     })
     .catch(error => {
-        dispatch({ type: CREATE_PLOT_FAIL, payload: error})
+        dispatch({ type: CREATE_PLOT_FAIL, payload: 'Error in creating plot. Please try again'})
     })
 }

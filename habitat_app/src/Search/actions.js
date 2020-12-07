@@ -41,7 +41,7 @@ export const setDownloadPlot = (id, title) => (dispatch) => {
         const bodyFormData = new FormData();
         bodyFormData.append('json', json_forUpload);
         bodyFormData.append('outputName', outputName);
-        axios.post(`http://ogre.adc4gis.com/convertJson`, bodyFormData, config)
+        axios.post(`https://ogre.adc4gis.com/convertJson`, bodyFormData, config)
         // axios.post(`http://ogre.adc4gis.com/convertJson`, {
         //     json: json_forUpload,
         //     outputName: outputName
@@ -75,6 +75,6 @@ export const setDownloadPlot = (id, title) => (dispatch) => {
         })
     })
     .catch(error => {
-        dispatch({ type: DOWNLOAD_PLOT_FAIL, payload: error})
+        dispatch({ type: DOWNLOAD_PLOT_FAIL, payload: 'Data available only to registered users'})
     })
 }

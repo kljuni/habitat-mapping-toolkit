@@ -29,7 +29,7 @@ SECRET_KEY = os.getenv("SECRET_KEY_DJANGO")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['habmapp.oa.r.appspot.com','127.0.0.1']
 
 
 # Application definition
@@ -83,14 +83,50 @@ WSGI_APPLICATION = 'habitat_be.wsgi.application'
 
 # # SPATIALITE_LIBRARY_PATH= r'C:\Users\Ivan\Documents\CS50WEB\habitat-mapping-toolkit\Scripts\mod_spatialite'
 # SPATIALITE_LIBRARY_PATH = 'mod_spatialite'
-DATABASES = {
-    'default': {
-        # 'ENGINE': 'django.contrib.gis.db.backends.spatialite',
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         # 'ENGINE': 'django.contrib.gis.db.backends.spatialite',
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
+# Install PyMySQL as mysqlclient/MySQLdb to use Django's mysqlclient adapter
+# See https://docs.djangoproject.com/en/2.1/ref/databases/#mysql-db-api-drivers
+# for more information
+import pymysql  # noqa: 402
+pymysql.version_info = (1, 4, 6, 'final', 0)  # change mysqlclient version
+pymysql.install_as_MySQLdb()
+
+if os.getenv('GAE_APPLICATION', None):
+    # Running on production App Engine, so connect to Google Cloud SQL using
+    # the unix socket at /cloudsql/<your-cloudsql-connection string>
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'HOST': '/cloudsql/' + os.getenv("CONNECTION_NAME"),
+            'USER': os.getenv("USER"),
+            'PASSWORD': os.getenv("PASS_GCLOUD"),
+            'NAME': os.getenv("DB_NAME"),
+        }
+    }
+else:
+    # Running locally so connect to either a local MySQL instance or connect to
+    # Cloud SQL via the proxy. To start the proxy via command line:
+    #
+    #     $ cloud_sql_proxy -instances=[INSTANCE_CONNECTION_NAME]=tcp:3306
+    #
+    # See https://cloud.google.com/sql/docs/mysql-connect-proxy
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'HOST': '127.0.0.1',
+            'PORT': '3306',
+            'NAME': os.getenv("DB_NAME"),
+            'USER': os.getenv("USER"),
+            'PASSWORD': os.getenv("PASS_GCLOUD"),
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -155,6 +191,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = 'static'
+
 
 # GDAL_LIBRARY_PATH = r'C:\Users\Ivan\Documents\CS50WEB\habitat-mapping-toolkit\Lib\site-packages\osgeo\gdal301'
 # GEOS_LIBRARY_PATH = r'C:\Users\Ivan\Documents\CS50WEB\habitat-mapping-toolkit\Lib\site-packages\shapely\DLLs\geos_c'

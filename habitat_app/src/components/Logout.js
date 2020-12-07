@@ -27,7 +27,7 @@ const Logout = ({ handleMenuClick }) => {
     }
 
     return (
-        <MenuItem onClick={() => {handleMenuClick('/logout/');handleLogout()}}>Log out</MenuItem>
+        <MenuItem onClick={() => {handleLogout()}}>Log out</MenuItem>
         // <span onClick={handleLogout}>Log out</span>
     )
 };

@@ -1,10 +1,13 @@
 import axios from 'axios'
 
 export const baseURL = 'http://127.0.0.1:8000/'
+// export const baseURL = 'https://habmapp.oa.r.appspot.com/'
+
+// axios.defaults.withCredentials = true;
 
 const axiosInstance = axios.create({
     baseURL: baseURL,
-    timeout: 5000,
+    timeout: 20000,
     headers: {
         'Authorization': localStorage.getItem('access_token') ? "JWT " + localStorage.getItem('access_token') : null,
         'Content-Type': 'application/json',
@@ -24,8 +27,8 @@ axiosInstance.interceptors.response.use(
         }
 
         if (error.response.data.code === "token_not_valid" &&
-            error.response.status === 401 && 
-            error.response.statusText === "Unauthorized") 
+            error.response.status === 401)
+            // error.response.statusText === "Unauthorized")
             {
                 const refreshToken = localStorage.getItem('refresh_token');
 

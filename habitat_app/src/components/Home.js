@@ -50,8 +50,11 @@ const Home = () => {
                             {check} Contribute data
                             </Typography>
                             <Typography className={classes.myButtonClass} variant="overline" display="block">
-                            {check} Search the database
+                            {check} Download data
                             </Typography>
+                            <Typography className={classes.myButtonClass} variant="overline" display="block">
+                            {check} Search the database
+                            </Typography>                            
                             {/* <p>{check} Create new plots</p>                   
                             <p>{check} Contribute data</p>                   
                             <p>{check} Search the database</p>       */}
