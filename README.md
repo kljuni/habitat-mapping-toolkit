@@ -4,7 +4,7 @@ An app used for mapping different kinds of habitats. Primarily intended for NGO 
 # Getting started
 You can view a live demo over at https://habmapp.oa.r.appspot.com/
 
-To get the frontend running locally:
+To get the app running locally on windows:
 - Clone this repo
 - Set up a virtual environment: `py -m venv habitat-mapping-toolkit` 
 - Install packages with pip: `pip install -r requirements.txt`
