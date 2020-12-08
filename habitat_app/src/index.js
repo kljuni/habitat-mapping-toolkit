@@ -14,7 +14,7 @@ import { createPlot } from './Create/reducers';
 import { searchFilterPlots, downloadPlots } from './Search/reducers';
 import { localStorageMiddleware } from './middleware';
 
-// const logger = createLogger();
+// const logger = createLogger(); 
 
 const rootReducer = combineReducers({ loginUser, createPlot, searchFilterPlots, downloadPlots })
 

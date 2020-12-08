@@ -8,13 +8,15 @@ import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import Select from '@material-ui/core/Select';
 import { habitat_types } from '../Util';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { setCreatePlot } from '../../Create/actions';
 import TransitionAlert from '../TransitionAlert';
+import { CREATE_DEFAULTS } from '../../constants';
 
 const mapStateToProps = state => {
     return {
         data_title: state.createPlot.data_title,
+        data_created: state.createPlot.data_created,
         error: state.createPlot.error,
         loading: state.createPlot.loading,
         refresh: state.createPlot.refresh,
@@ -36,30 +38,31 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const CreatePlotForm = ({ handleSave, data_title, error, onPlotSave, refresh }) => {
+const CreatePlotForm = ({ handleSave, data_created, data_title, error, onPlotSave, refresh }) => {
     const [name, setName] = useState('');
     const [desc, setDesc] = useState('');
     const [type, setType] = useState(null);
     const [url, setUrl] = useState(null);
     const [open, setOpen] = useState(false);
     const [severity, setSeverity] = useState('');
-
+    const dispatch = useDispatch();
     useEffect(() => {
-        if (data_title) {
+        if (data_created) {
             setName('');
             setDesc('');
             setType(null);
             setUrl('');
             setOpen(true);
             setSeverity('success');
-            setTimeout(function(){ setOpen(false); }, 7000);
+            setTimeout(function(){ setOpen(false); }, 5000);
         }
         if (error) {
             setOpen(true);
             setSeverity('error');
-            setTimeout(function(){ setOpen(false); }, 7000);
+            setTimeout(function(){ setOpen(false); }, 5000);
         }
-    }, [data_title, error, refresh])
+        setTimeout(function(){ dispatch({ type: CREATE_DEFAULTS }); }, 5000);
+    }, [refresh])
 
     const handleSubmit = (e, name, desc, type, url) => {
         e.preventDefault();
