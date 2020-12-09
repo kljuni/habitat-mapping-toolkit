@@ -9,7 +9,7 @@ In a world facing multiple challenges, the need for a participatory and educated
 - Auth: JWT for DRF
 - Server: Google Cloud
 
-# Features
+## Features
 - users can search and filter the database for habitat plots
 - authenticated users can draw new plots and add the pertaining information
 - saved plots automatically get assigned the geographical centre of the plot, surface area, the regional position in Slovenia (based on a KML file)
