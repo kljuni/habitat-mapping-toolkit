@@ -16,7 +16,7 @@ In a world facing multiple challenges, the need for a participatory and educated
 - authenticated users can download ESRI shp data for each habitat plot
 
 # Getting started
-You can view a live demo over at https://habmapp.oa.r.appspot.com/
+You can view a live demo over at https://habmapp.herokuapp.com/
 
 To get the app running locally on windows:
 - Clone this repo
